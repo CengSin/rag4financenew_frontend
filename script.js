@@ -45,30 +45,16 @@ async function handleSubmit(event) {
       body: formData,
     });
 
-    const raw = await response.text();
-    let data = {};
-
-    try {
-      data = raw ? JSON.parse(raw) : {};
-    } catch (parseError) {
-      console.warn('解析 JSON 失败，使用原始文本回退', parseError);
-      data = { answer: raw || '' };
-    }
-
     if (!response.ok) {
-      const message = data.error || data.message || `接口返回 ${response.status}`;
-      throw new Error(message);
+      throw new Error(`接口返回 ${response.status}`);
     }
 
-    renderMarkdown(data.answer || raw || '未返回 answer 字段');
+    const data = await response.json();
+    renderMarkdown(data.answer || '未返回 answer 字段');
     setStatus('请求完成');
   } catch (error) {
     console.error(error);
-    renderMarkdown(
-      typeof error.message === 'string' && error.message.trim()
-        ? `请求失败：${error.message}`
-        : '请求失败，请检查服务是否已启动。'
-    );
+    renderMarkdown('请求失败，请检查服务是否已启动。');
     setStatus(error.message || '请求失败', 'error');
   } finally {
     submitBtn.disabled = false;
@@ -95,7 +81,7 @@ function refreshEmbedSnippet() {
   const question = questionInput.value.trim() || '在这里输入问题';
   const params = new URLSearchParams({ question, autofetch: '1' });
   const src = `${base}?${params.toString()}`;
-  const iframe = `<iframe src="${src}" style="width:100%;max-width:720px;height:480px;border:1px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.25);background:#0d0f12;" title="RAG助手" loading="lazy"></iframe>`;
+  const iframe = `<iframe src="${src}" style="width:100%;max-width:720px;height:480px;border:1px solid #e5e7eb;border-radius:12px;" title="RAG助手"></iframe>`;
 
   embedCodeEl.value = iframe;
   embedPreview.src = src;
@@ -112,7 +98,7 @@ function prefillFromQuery() {
 
   refreshEmbedSnippet();
 
-  if (presetQuestion && auto === '1') {
+  if (presetQuestion && auto) {
     form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
   }
 }
