@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAG 智能问答</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">RAG · 内网助手</p>
+          <h1>提问、生成、复制，一键完成</h1>
+          <p class="subtitle">
+            直接调用本地接口，返回 Markdown 格式的回答，并可将问答组件快速嵌入任意页面。
+          </p>
+          <div class="pill-group">
+            <span class="pill">实时导出</span>
+            <span class="pill">Markdown 展示</span>
+            <span class="pill">一键嵌入</span>
+          </div>
+        </div>
+        <div class="hero-cta">
+          <div class="chip">Endpoint</div>
+          <div class="endpoint">http://localhost:8081/ai/temporal</div>
+          <p class="endpoint-tip">使用 FormData 传入 question 字段</p>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">提问区</p>
+              <h2>输入问题并提交</h2>
+            </div>
+            <button class="ghost" id="fill-demo">填入示例</button>
+          </div>
+
+          <form id="qa-form">
+            <label class="field">
+              <span>问题</span>
+              <textarea
+                id="question"
+                name="question"
+                rows="4"
+                placeholder="请输入想查询的业务问题，或使用下方示例"
+                required
+              ></textarea>
+            </label>
+
+            <div class="row">
+              <div class="hint">提交后将直接调用本地接口，返回结果将以 Markdown 渲染。</div>
+              <button type="submit" class="primary" id="submit-btn">立即询问</button>
+            </div>
+          </form>
+
+          <p class="status" id="status">等待提交</p>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">回答区</p>
+              <h2>AI 返回结果</h2>
+            </div>
+            <button class="ghost" id="copy-answer">复制文本</button>
+          </div>
+
+          <div id="answer" class="answer-box" aria-live="polite">
+            <p class="muted">提交问题后，这里会展示 Markdown 格式的回答。</p>
+          </div>
+        </section>
+
+        <section class="card wide">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">嵌入</p>
+              <h2>嵌入到其他页面</h2>
+            </div>
+          </div>
+
+          <div class="embed-grid">
+            <div>
+              <p class="muted">复制下面的 iframe 代码，即可在任意页面嵌入同款问答组件。</p>
+              <div class="embed-box">
+                <textarea id="embed-code" readonly></textarea>
+                <div class="embed-actions">
+                  <button class="ghost" id="refresh-embed">使用当前问题生成</button>
+                  <button class="primary" id="copy-embed">复制代码</button>
+                </div>
+              </div>
+              <p class="hint">
+                支持 URL 参数：<code>question</code>（预填问题）与 <code>autofetch</code>
+                （设为 1 时自动提交）。
+              </p>
+            </div>
+            <div class="preview">
+              <p class="muted">嵌入预览</p>
+              <iframe id="embed-preview" title="RAG 嵌入预览"></iframe>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
