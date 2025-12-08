@@ -32,12 +32,59 @@
       <div class="layout">
         <aside class="sidebar">
           <button class="primary wide" id="new-session">+ 新聊天</button>
-          <div class="sidebar-section">
-            <p class="eyebrow">对话列表</p>
-            <div id="history-list" class="history-list">
-              <p class="muted empty">暂无历史对话</p>
+          <details class="sidebar-section dropdown links-panel">
+            <summary class="dropdown-summary">
+              <span class="eyebrow">管理页面</span>
+              <span class="caret"></span>
+            </summary>
+            <div class="dropdown-body">
+              <div class="link-grid">
+                <a
+                  class="link-card"
+                  href="http://localhost:9001"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  MinIO
+                </a>
+                <a
+                  class="link-card"
+                  href="http://127.0.0.1:6333/dashboard"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Qdrant
+                </a>
+                <a
+                  class="link-card"
+                  href="http://localhost:8080/namespaces/default/workflows"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Temporal
+                </a>
+                <a
+                  class="link-card"
+                  href="https://openrouter.ai/activity"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  OpenRouter
+                </a>
+              </div>
             </div>
-          </div>
+          </details>
+          <details class="sidebar-section dropdown" open>
+            <summary class="dropdown-summary">
+              <span class="eyebrow">对话列表</span>
+              <span class="caret"></span>
+            </summary>
+            <div class="dropdown-body history-body">
+              <div id="history-list" class="history-list">
+                <p class="muted empty">暂无历史对话</p>
+              </div>
+            </div>
+          </details>
         </aside>
 
         <main class="chat-pane">
