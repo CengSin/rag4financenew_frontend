@@ -7,7 +7,8 @@ const historyList = document.getElementById('history-list');
 const sessionPill = document.getElementById('session-pill');
 const sessionTitle = document.getElementById('session-title');
 
-const ENDPOINT = 'http://localhost:8081/ai/new/session';
+//const ENDPOINT = 'http://localhost:8081/ai/new/session';
+const ENDPOINT = 'http://localhost:8086/v2/chat';
 
 let conversations = [];
 let activeConversationId = null;
