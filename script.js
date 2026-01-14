@@ -7,8 +7,9 @@ const historyList = document.getElementById('history-list');
 const sessionPill = document.getElementById('session-pill');
 const sessionTitle = document.getElementById('session-title');
 
-//const ENDPOINT = 'http://localhost:8081/ai/new/session';
-const ENDPOINT = 'http://localhost:8086/v2/chat';
+const ENDPOINT = 'http://localhost:8081/ai/new/session';
+const LIST_ENDPOINT = 'http://localhost:8086/v2/session/list';
+const HISTORY_ENDPOINT = 'http://localhost:8086/v2/session/history';
 
 let conversations = [];
 let activeConversationId = null;
@@ -66,6 +67,9 @@ function renderMessages(conversation, showTyping = false) {
     aiRow.appendChild(aiBubble);
     answerEl.appendChild(aiRow);
   }
+
+  // Scroll to bottom
+  answerEl.scrollTop = answerEl.scrollHeight;
 }
 
 function addMessage(conversation, role, content) {
@@ -109,14 +113,68 @@ function getActiveConversation() {
   return conversations.find((conv) => conv.id === activeConversationId);
 }
 
-function setActiveConversation(id) {
+async function setActiveConversation(id) {
   const conv = conversations.find((item) => item.id === id);
   if (!conv) return;
+
   activeConversationId = id;
+
+  // If it's a backend session and doesn't have messages yet, fetch them
+  if (conv.sessionId && conv.messages.length === 0) {
+    setStatus('正在获取对话详情...');
+    try {
+      const response = await fetch(`${HISTORY_ENDPOINT}?session_id=${conv.sessionId}`);
+      if (response.ok) {
+        const history = await response.json();
+        conv.messages = history.map(item => ({
+          role: item.role === 'assistant' ? 'ai' : 'user',
+          content: item.content
+        }));
+        if (conv.messages.length > 0) {
+          refreshConversationTitle(conv);
+        }
+      } else {
+        throw new Error(`获取历史失败: ${response.status}`);
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus('获取历史记录失败', 'error');
+    }
+  }
+
   renderHistory();
   renderMessages(conv);
   updateSessionMeta(conv);
-  setStatus(conv.messages.length ? '已切换到该对话' : '等待提交');
+  setStatus(conv.messages.length ? '已加载对话内容' : '等待提交');
+}
+
+async function fetchHistoryList() {
+  setStatus('正在加载对话列表...');
+  try {
+    const response = await fetch(`${LIST_ENDPOINT}?cursor=0&limit=20`);
+    if (!response.ok) throw new Error('网络请求错误');
+
+    const data = await response.json();
+    if (data.sessions && data.sessions.length > 0) {
+      conversations = data.sessions.map(fullId => {
+        // Strip prefix "chatHistory:" if present
+        const sessionId = fullId.replace('chatHistory:', '');
+        return {
+          id: `backend-${sessionId}`,
+          title: `对话 ${sessionId.slice(0, 8)}`,
+          sessionId: sessionId,
+          messages: [] // Will be lazy loaded
+        };
+      });
+      // Set the first one as active if no active conversation or it's just the initial empty one
+      if (conversations.length > 0) {
+        await setActiveConversation(conversations[0].id);
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch history list:', error);
+    setStatus('加载列表失败', 'error');
+  }
 }
 
 function refreshConversationTitle(conversation) {
@@ -143,6 +201,8 @@ function createConversation(silent = false) {
   renderMessages(conversation);
   updateSessionMeta(conversation);
   if (!silent) setStatus('已创建新聊天');
+  // Clear input when creating new session
+  questionInput.value = '';
   return conversation;
 }
 
@@ -210,7 +270,8 @@ function handleKeydown(event) {
   }
 }
 
-createConversation(true);
+// Initial load
+fetchHistoryList();
 
 newSessionBtn.addEventListener('click', () => {
   createConversation();

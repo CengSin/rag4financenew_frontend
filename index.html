@@ -1,122 +1,79 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RAG 智能问答</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  </head>
-  <body>
-    <div class="page">
-      <header class="topbar">
-        <div class="brand">
-          <div class="logo-dot"></div>
-          <div>
-            <p class="eyebrow">RAG 内网助手</p>
-            <h1>聊天 · 生成 · 导出</h1>
-          </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG 智能问答</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+  <div class="page">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-dot"></div>
+        <div>
+          <p class="eyebrow">Financial AI</p>
+          <h1>RAG 智能助手</h1>
         </div>
-        <div class="endpoint-badge">
-          <span class="chip">Endpoint</span>
-          <span class="endpoint">http://localhost:8081/ai/new/session</span>
-        </div>
-      </header>
-
-      <div class="layout">
-        <aside class="sidebar">
-          <button class="primary wide" id="new-session">+ 新聊天</button>
-          <details class="sidebar-section dropdown links-panel">
-            <summary class="dropdown-summary">
-              <span class="eyebrow">管理页面</span>
-              <span class="caret"></span>
-            </summary>
-            <div class="dropdown-body">
-              <div class="link-grid">
-                <a
-                  class="link-card"
-                  href="http://localhost:9001"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  MinIO
-                </a>
-                <a
-                  class="link-card"
-                  href="http://127.0.0.1:6333/dashboard"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Qdrant
-                </a>
-                <a
-                  class="link-card"
-                  href="http://localhost:8080/namespaces/default/workflows"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Temporal
-                </a>
-                <a
-                  class="link-card"
-                  href="https://openrouter.ai/activity"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  OpenRouter
-                </a>
-              </div>
-            </div>
-          </details>
-          <details class="sidebar-section dropdown" open>
-            <summary class="dropdown-summary">
-              <span class="eyebrow">对话列表</span>
-              <span class="caret"></span>
-            </summary>
-            <div class="dropdown-body history-body">
-              <div id="history-list" class="history-list">
-                <p class="muted empty">暂无历史对话</p>
-              </div>
-            </div>
-          </details>
-        </aside>
-
-        <main class="chat-pane">
-          <div class="chat-header">
-            <div>
-              <p class="muted">会话管理</p>
-              <h2 id="session-title">未创建会话</h2>
-            </div>
-            <div class="pill soft" id="session-pill">未创建会话</div>
-          </div>
-
-          <div id="answer" class="chat-area" aria-live="polite">
-            <div class="empty-chat">
-              <p class="muted">开始新的对话，输入问题并回车发送。</p>
-            </div>
-          </div>
-
-          <div class="composer">
-            <textarea
-              id="question"
-              rows="2"
-              placeholder="发送消息..."
-            ></textarea>
-            <div class="composer-actions">
-              <p class="status" id="status">等待提交</p>
-              <button class="primary" id="submit-btn">发送</button>
-            </div>
-          </div>
-        </main>
       </div>
-    </div>
 
-    <script src="script.js"></script>
-  </body>
+      <button class="primary wide" id="new-session">+ 新聊天</button>
+
+
+      <div class="sidebar-section">
+        <div class="dropdown-summary">
+          <span>对话列表</span>
+        </div>
+        <div id="history-list" class="history-list">
+          <p class="muted empty">暂无历史对话</p>
+        </div>
+      </div>
+
+      <div class="sidebar-section links-panel">
+        <div class="dropdown-summary">
+          <span>管理面板</span>
+        </div>
+        <div class="link-grid">
+          <a class="link-card" href="http://localhost:9001" target="_blank">MinIO</a>
+          <a class="link-card" href="http://127.0.0.1:6333/dashboard" target="_blank">Qdrant</a>
+          <a class="link-card" href="http://localhost:8080" target="_blank">Temporal</a>
+          <a class="link-card" href="https://openrouter.ai" target="_blank">OpenRouter</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="chat-pane">
+      <div class="chat-header">
+        <div>
+          <p class="muted">会话管理</p>
+          <h2 id="session-title">未创建会话</h2>
+        </div>
+        <div class="pill soft" id="session-pill">未创建会话</div>
+      </div>
+
+      <div id="answer" class="chat-area" aria-live="polite">
+        <div class="empty-chat">
+          <p class="muted">开始新的对话，输入问题并回车发送。</p>
+        </div>
+      </div>
+
+      <div class="composer">
+        <textarea id="question" rows="2" placeholder="发送消息..."></textarea>
+        <div class="composer-actions">
+          <p class="status" id="status">等待提交</p>
+          <button class="primary" id="submit-btn">发送</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
 </html>
